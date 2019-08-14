@@ -1,3 +1,8 @@
+Magento integration v1.5.1 (Released: 21.11.2016)
+Changes:
+- New monitoring code
+
+--------------------------------------------------
 Magento integration v1.5.0 (Released: 09.11.2016)
 Added:
 - Register tags,
