@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <SalesManago_Tracking>
+            <version>0.0.8</version>
+        </SalesManago_Tracking>
+    </modules>
+    
+    <global>
+		<models>
+			<tracking>
+				<class>SalesManago_Tracking_Model</class>
+				<resourceModel>tracking_resource</resourceModel>
+			</tracking>
+			<tracking_resource>
+				<class>SalesManago_Tracking_Model_Resource</class>
+				<entities>
+					<customersync>
+						<table>salesmanago_customer_sync</table>
+					</customersync>
+				</entities>
+			</tracking_resource>
+		</models>
+		
+		<events>
+			<customer_login>
+				<observers>
+				  <salesmanago_tracking_observer>
+					  <type>singleton</type>
+					  <class>SalesManago_Tracking_Model_Observer</class>
+					  <method>customer_login</method>
+				  </salesmanago_tracking_observer>
+			   </observers>
+			</customer_login>
+			<customer_register_success>
+				<observers>
+				  <salesmanago_tracking_observer>
+					  <type>singleton</type>
+					  <class>SalesManago_Tracking_Model_Observer</class>
+					  <method>customer_register_success</method>
+				  </salesmanago_tracking_observer>
+			   </observers>
+			</customer_register_success>
+			
+			<newsletter_subscriber_save_before>
+				<observers>
+					<salesmanago_tracking_observer>
+					  <type>singleton</type>
+					  <class>SalesManago_Tracking_Model_Observer</class>
+					  <method>newsletter_subscriber_save_before</method>
+					</salesmanago_tracking_observer>
+			   </observers>
+			</newsletter_subscriber_save_before>
+			
+			<newsletter_subscriber_delete_after>
+                <observers>
+                    <salesmanago_tracking_observer>
+						<type>singleton</type>
+                        <class>SalesManago_Tracking_Model_Observer</class>
+                        <method>newsletter_subscriber_delete_after</method>
+                    </salesmanago_tracking_observer>
+                </observers>
+            </newsletter_subscriber_delete_after>
+						
+			<checkout_onepage_controller_success_action>
+				<observers>
+				  <salesmanago_tracking_observer>
+					  <type>singleton</type>
+					  <class>SalesManago_Tracking_Model_Observer</class>
+					  <method>checkout_onepage_controller_success_action</method>
+				  </salesmanago_tracking_observer>
+			   </observers>
+			</checkout_onepage_controller_success_action>
+			
+			<checkout_cart_save_after>
+				<observers>
+				  <salesmanago_tracking_observer>
+					  <type>singleton</type>
+					  <class>SalesManago_Tracking_Model_Observer</class>
+					  <method>checkout_cart_save_after</method>
+				  </salesmanago_tracking_observer>
+			   </observers>
+			</checkout_cart_save_after>
+			<wishlist_item_collection_products_after_load>
+				<observers>
+				  <salesmanago_tracking_observer>
+					  <type>singleton</type>
+					  <class>SalesManago_Tracking_Model_Observer</class>
+					  <method>wishlist_item_collection_products_after_load</method>
+				  </salesmanago_tracking_observer>
+			   </observers>
+			</wishlist_item_collection_products_after_load>
+			<review_save_after>
+				<observers>
+				  <salesmanago_tracking_observer>
+					  <type>singleton</type>
+					  <class>SalesManago_Tracking_Model_Observer</class>
+					  <method>review_save_after</method>
+				  </salesmanago_tracking_observer>
+			   </observers>
+			</review_save_after>
+		</events>
+        
+		<helpers>
+			<tracking>
+				<class>SalesManago_Tracking_Helper</class>
+			</tracking>
+		</helpers>
+		
+		<blocks>
+			<tracking>
+				<class>SalesManago_Tracking_Block</class>        
+				</tracking>
+		</blocks>
+		
+		<resources>
+			<tracking_setup>
+				<setup>
+                    <module>SalesManago_Tracking</module>
+                    <class>SalesManago_Tracking_Model_Resource_Setup</class>
+				</setup>
+				 <connection>
+					<use>core_setup</use>
+				</connection>
+			</tracking_setup>
+			<tracking_write>
+				<connection>
+					<use>core_write</use>
+				</connection>
+			</tracking_write>
+			<tracking_read>
+				<connection>
+					<use>core_read</use>
+				</connection>
+			</tracking_read>
+		</resources>
+    </global>
+    
+    
+    <frontend>
+        <layout>
+            <updates>
+                <tracking>
+                    <file>salesmanago.xml</file>
+                </tracking>
+            </updates>
+        </layout>
+		
+		<routers>
+			<newsletter>
+                <args>
+                    <modules>
+                        <SalesManago_Tracking before="Mage_Newsletter">SalesManago_Tracking_Newsletter</SalesManago_Tracking>
+                    </modules>
+                </args>
+            </newsletter>		
+			<frontend>
+				<use>standard</use>
+				<args>
+					<module>SalesManago_Tracking</module>
+					<frontName>salesmanago</frontName>
+				</args>
+            </frontend>
+        </routers>
+    </frontend>
+    <adminhtml>
+    <acl>
+		<resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>            
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <salesmanago_tracking translate="title" module="tracking">
+                                            <title>Sales Manago</title>
+                                            <sort_order>52</sort_order>
+                                        </salesmanago_tracking>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

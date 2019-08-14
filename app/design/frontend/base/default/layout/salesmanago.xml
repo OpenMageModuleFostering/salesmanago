@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+     <default>
+	     <reference name="head">
+	            <block type="tracking/layer" name="salesmanago_tracking">
+	           		<action method="setTemplate"><template>salesmanago/tracking/tracking.phtml</template></action> 
+	  			</block>
+		</reference>
+	</default>
+</layout>

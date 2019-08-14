@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/SALESmanago",
+    "type": "magento-module",
+    "license": "ASL",
+    "homepage": "",
+    "description": "SALESmanago Marketing Automation integration.",
+    "authors": [
+    {
+        "name": "Benhauer Sp. z o.o. Sp. K.",
+        "email": "info@salesmanago.pl"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

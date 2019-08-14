@@ -1,0 +1,29 @@
+<?php
+	$client_id = $this->getClientId();
+	$endpoint = $this->getEndPoint();
+	$client_salesmanago_id = $this->getClientSalesManagoId();
+	$additional_js = $this->getAdditionalJs();
+	$active = $this -> isActive();
+	
+	if($active == 1 && !empty($client_id) && !empty($endpoint)){
+		$trackingScript = "<script type='text/javascript'>\n";
+		$trackingScript .= "\tvar _smid = '".$client_id."';\n";
+		if(isset($additional_js) && !empty($additional_js)){
+			$trackingScript .= "\t".$additional_js."\n";
+		}
+		if($client_salesmanago_id){
+			  $trackingScript .= "\tvar _smclientid = '".$client_salesmanago_id."';\n";
+		}
+		$trackingScript .= "\t(function () {\n";
+		$trackingScript .= "\t\tvar sm = document.createElement('script');\n";
+		$trackingScript .= "\t\tsm.type = 'text/javascript';\n";
+		$trackingScript .= "\t\tsm.async = true;\n";
+		$trackingScript .= "\t\tsm.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + '".$endpoint."/static/sm.js';\n";
+		$trackingScript .= "\t\tvar s = document.getElementsByTagName('script')[0];\n";
+		$trackingScript .= "\t\ts.parentNode.insertBefore(sm, s);\n";
+		$trackingScript .= "\t})();\n";
+		$trackingScript .= "</script>\n";
+		
+		echo $trackingScript;
+	}	
+?>
