@@ -2,7 +2,7 @@
 <config>
     <modules>
         <SalesManago_Tracking>
-            <version>0.0.8</version>
+            <version>1.5.0</version>
         </SalesManago_Tracking>
     </modules>
     
@@ -81,24 +81,35 @@
 				  </salesmanago_tracking_observer>
 			   </observers>
 			</checkout_cart_save_after>
-			<wishlist_item_collection_products_after_load>
+
+            <customer_address_save_commit_after>
+                <observers>
+                    <salesmanago_tracking_observer>
+                        <type>singleton</type>
+                        <class>SalesManago_Tracking_Model_Observer</class>
+                        <method>customer_data_edit</method>
+                    </salesmanago_tracking_observer>
+                </observers>
+            </customer_address_save_commit_after>
+			<admin_system_config_changed_section_salesmanago_tracking>
 				<observers>
-				  <salesmanago_tracking_observer>
-					  <type>singleton</type>
-					  <class>SalesManago_Tracking_Model_Observer</class>
-					  <method>wishlist_item_collection_products_after_load</method>
-				  </salesmanago_tracking_observer>
-			   </observers>
-			</wishlist_item_collection_products_after_load>
-			<review_save_after>
+					<salesmanago_tracking_observer>
+						<type>singleton</type>
+						<class>SalesManago_Tracking_Model_Observer</class>
+						<method>adminSystemConfigChangedSectionSalesmanago_tracking</method>
+					</salesmanago_tracking_observer>
+				</observers>
+			</admin_system_config_changed_section_salesmanago_tracking>
+
+			<wishlist_product_add_after>
 				<observers>
-				  <salesmanago_tracking_observer>
-					  <type>singleton</type>
-					  <class>SalesManago_Tracking_Model_Observer</class>
-					  <method>review_save_after</method>
-				  </salesmanago_tracking_observer>
-			   </observers>
-			</review_save_after>
+					<salesmanago_tracking_observer>
+						<type>singleton</type>
+						<class>SalesManago_Tracking_Model_Observer</class>
+						<method>wishlist_event</method>
+					</salesmanago_tracking_observer>
+				</observers>
+			</wishlist_product_add_after>
 		</events>
         
 		<helpers>
@@ -109,7 +120,7 @@
 		
 		<blocks>
 			<tracking>
-				<class>SalesManago_Tracking_Block</class>        
+				<class>SalesManago_Tracking_Block</class>
 				</tracking>
 		</blocks>
 		
@@ -164,11 +175,20 @@
         </routers>
     </frontend>
     <adminhtml>
-    <acl>
-		<resources>
-            <all>
+		<translate>
+			<modules>
+				<SalesManago_Tracking>
+					<files>
+						<default>Salesmanago_Tracking.csv</default>
+					</files>
+				</SalesManago_Tracking>
+			</modules>
+		</translate>
+   		<acl>
+			<resources>
+            	<all>
                 <title>Allow Everything</title>
-            </all>            
+            	</all>
                 <admin>
                     <children>
                         <system>

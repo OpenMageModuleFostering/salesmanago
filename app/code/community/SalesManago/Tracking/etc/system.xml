@@ -8,7 +8,7 @@
     </tabs>
     <sections>
         <salesmanago_tracking translate="label" module="tracking">
-            <label>General</label>
+            <label>Connector settings</label>
             <tab>salesmanago</tab>
             <frontend_type>text</frontend_type>
             <sort_order>10</sort_order>
@@ -17,7 +17,7 @@
             <show_in_store>1</show_in_store>
             <groups>
                 <general translate="label" module="tracking">
-                    <label>General</label>
+                    <label>Connector settings</label>
                     <sort_order>800</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -33,7 +33,7 @@
                             <show_in_store>1</show_in_store>
                         </client_id>
                         <api_secret translate="label">
-                            <label>Api secret</label>
+                            <label>API secret code</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
@@ -41,7 +41,7 @@
                             <show_in_store>1</show_in_store>
                         </api_secret>
                         <email translate="label">
-                            <label>E-mail</label>
+                            <label>Main owner E-mail</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -49,26 +49,44 @@
                             <show_in_store>1</show_in_store>
                         </email>
                         <endpoint translate="label">
-                            <label>End point</label>
+                            <label>End point address</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </endpoint>
-                        <tags translate="label">
-                            <label>Tags</label>
+                        <tagsNewsletter translate="label">
+                            <label>Newsletter subscription tags</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>Next tags paste followed by coma</comment>
-                        </tags>
-						<additional_js translate="label">
-                            <label>Additional JS extract</label>
+                            <comment>If you want to use more tags, separate them with a comma</comment>
+                        </tagsNewsletter>
+						<tagsRegistration translate="label">
+                            <label>Sign up tag</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>51</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>If you want to use more tags, separate them with a comma</comment>
+                        </tagsRegistration>
+						<tagsPurchase translate="label">
+                            <label>Purchase tag</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>If you want to use more tags, separate them with a comma</comment>
+                        </tagsPurchase>
+						<additional_js translate="label">
+                            <label>Custom JS code</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -76,11 +94,11 @@
                         <connection_timeout translate="label">
                             <label>Connection Timeout</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>The maximum waiting period for script performance in miliseconds (optional)</comment>
+                            <comment>Limit the maximum execution time in ms (optional)</comment>
                         </connection_timeout>
                         <active translate="label">
                             <label>Enabled</label>

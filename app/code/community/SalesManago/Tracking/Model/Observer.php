@@ -1,41 +1,20 @@
 <?php
 
-class SalesManago_Tracking_Model_Observer {
- 
-	protected function _getHelper(){
+class SalesManago_Tracking_Model_Observer
+{
+
+    protected function _getHelper()
+    {
         return Mage::helper('tracking');
     }
-	
-	/*
-	* BK Changes to Sales Manago Module.
-	* Adding Observer to Review event.
-	* Will send Sales Manago API If a customer review is approved.
-	* @author:Carlos Alonso de Linaje.
-	* @date: 28/Oct/2015
-	*/
-	public function review_save_after($observer)
-	{
-	    $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
-        if($active == 1) {
-            $object = $observer->getEvent()->getObject();
-            $review = $object->getData();
-            //Only send data if is a Customer (not just Guest)
-            //And if the review is approved
-            if ($review['status_id']==1 && array_key_exists('customer_id', $review))
-            {
-                $r =$this->_getHelper()->salesmanagoReviewSync($review);
-                return $r;
-                Mage::log($r);
-            }
-        }
-	    return false;
-	}
-    public function customer_login($observer) {
-        $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
-        if($active == 1) {
-            $customer = $observer->getCustomer()->getData();
 
-            if (is_array($customer) && !empty($customer)) {
+    public function customer_login($observer)
+    {
+        $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
+        if ($active == 1) {
+            $customer = $observer->getCustomer();
+
+            if (!empty($customer)) {
                 if (!isset($customer['salesmanago_contact_id']) || empty($customer['salesmanago_contact_id'])) {
                     $data = $this->_getHelper()->_setCustomerData($customer);
 
@@ -57,21 +36,23 @@ class SalesManago_Tracking_Model_Observer {
                 }
             }
         }
-		if(!isset($_COOKIE['smclient']) || empty($_COOKIE['smclient'])){
-                $period = time() + 36500 * 86400;
-                $customerData = Mage::getSingleton('customer/session')->getCustomer();
-                $contactId = $customerData->getSalesmanagoContactId();
-                $this->_getHelper()->sm_create_cookie('smclient', $contactId, $period);
+        if (!isset($_COOKIE['smclient']) || empty($_COOKIE['smclient'])) {
+            $period = time() + 36500 * 86400;
+            $customerData = Mage::getSingleton('customer/session')->getCustomer();
+            $contactId = $customerData->getSalesmanagoContactId();
+            $this->_getHelper()->sm_create_cookie('smclient', $contactId, $period);
         }
     }
-  
-    public function customer_register_success($observer) {
-        $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
-        if($active == 1) {
-            $customer = $observer->getCustomer()->getData();
 
-            if (is_array($customer) && !empty($customer)) {
+    public function customer_register_success($observer)
+    {
+        $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
+        if ($active == 1) {
+            $customer = $observer->getCustomer();
+
+            if (!empty($customer) && is_array($customer->getData())) {
                 $data = $this->_getHelper()->_setCustomerData($customer);
+                $data['tags'] = explode(",", Mage::getStoreConfig('salesmanago_tracking/general/tagsRegistration'));
 
                 $r = $this->_getHelper()->salesmanagoContactSync($data);
 
@@ -90,23 +71,25 @@ class SalesManago_Tracking_Model_Observer {
                 }
             }
         }
-		if(!isset($_COOKIE['smclient']) || empty($_COOKIE['smclient'])){
-                $period = time() + 36500 * 86400;
-                $customerData = Mage::getSingleton('customer/session')->getCustomer();
-                $contactId = $customerData->getSalesmanagoContactId();
-                $this->_getHelper()->sm_create_cookie('smclient', $contactId, $period);
+        if (!isset($_COOKIE['smclient']) || empty($_COOKIE['smclient'])) {
+            $period = time() + 36500 * 86400;
+            $customerData = Mage::getSingleton('customer/session')->getCustomer();
+            $contactId = $customerData->getSalesmanagoContactId();
+            $this->_getHelper()->sm_create_cookie('smclient', $contactId, $period);
         }
-		
-	}
-	
+
+    }
+
     /*
     * Dodanie zdarzenia addContactExtEvent na podsumowaniu zam�wienia z typem PURCHASE
     */
-	public function checkout_onepage_controller_success_action($observer){
+    public function checkout_onepage_controller_success_action($observer)
+    {
         $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
-        if($active == 1) {
+        if ($active == 1) {
             $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
             $orderDetails = Mage::getModel('sales/order')->load($orderId);
+
             $r = $this->_getHelper()->salesmanagoOrderSync($orderDetails);
 
             if ($r == false || (isset($r['success']) && $r['success'] == false)) {
@@ -119,77 +102,30 @@ class SalesManago_Tracking_Model_Observer {
                 );
                 $this->_getHelper()->setSalesmanagoCustomerSyncStatus($data);
             }
-            $this->_getHelper()->salesmanagoSalesSync($orderDetails);
+
             $eventId = Mage::getSingleton('core/session')->getEventId();
             if (isset($eventId) && !empty($eventId)) {
                 Mage::getSingleton('core/session')->unsEventId();
             }
         }
-	}
-	
-	/*
-	* BK Changes to Sales Manago Module.
-	* Adding Observer to Whislist event.
-	* Will Save WishList products on customer's Custom Details 
-	* @author:Carlos Alonso de Linaje.
-	* @date: 17/Oct/2015
-	*/
-	public function wishlist_item_collection_products_after_load($observer)
-	{
-	    Mage::log('whislist');
-	    $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
-        if($active == 1) 
-        {       
-            $_itemCollection = Mage::helper('wishlist')->getWishlistItemCollection();
-            foreach ($_itemCollection as $_item) 
-            {
-                $_products .= $_item->getProduct()->getId().',';
-            }
-            
-            $clientId = Mage::getStoreConfig('salesmanago_tracking/general/client_id');
-            $apiSecret = Mage::getStoreConfig('salesmanago_tracking/general/api_secret');
-            $apiKey = md5(time() . $apiSecret);
-            $ownerEmail = Mage::getStoreConfig('salesmanago_tracking/general/email');
-            $email = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
-            $endPoint = Mage::getStoreConfig('salesmanago_tracking/general/endpoint');
-            
-            $data_to_json = array(
-                    'apiKey' => $apiKey,
-                    'clientId' => $clientId,
-                    'requestTime' => time(),
-                    'contact' => array(
-                        'email' => $email,
-                        'state' => 'CUSTOMER',
-                    ),
-                    'sha' => sha1($apiKey . $clientId . $apiSecret),
-                    'owner' => $ownerEmail,
-            );
-            //BK Change Add a new tag on newsletter subscribe
-            $data_to_json['properties'] = array(
-                'WhislistDate_'.str_replace('.','_',parse_url(Mage::getBaseUrl (Mage_Core_Model_Store::URL_TYPE_WEB), PHP_URL_HOST)) => 
-                        Mage::getModel('core/date')->date('Y-m-d H:i:s'),
-                'WhislistProducts_'.str_replace('.','_',parse_url(Mage::getBaseUrl (Mage_Core_Model_Store::URL_TYPE_WEB), PHP_URL_HOST)) =>
-                        $_products
-            );      
-            
-            $json = json_encode($data_to_json);
-            $result = $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/upsert', $json);
-            $r = json_decode($result, true);
-            return $r;
-        }
-	}
-	
+    }
+
     /*
     * Dodanie (oraz na biezaco modyfikowanie) zdarzenia w koszyku addContactExtEvent z typem CART
     */
-	public function checkout_cart_save_after($observer){
+    public function checkout_cart_save_after($observer)
+    {
         $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
-        if($active == 1) {
+        if ($active == 1) {
             $cartHelper = Mage::getModel('checkout/cart')->getQuote();
-            $items = $cartHelper->getAllVisibleItems();
-            $itemsNamesList = array();
+            $productsIdsList = array();
+            $productsNamesList = array();
+
+            $items = $cartHelper->getAllItems();
             foreach ($items as $item) {
-                array_push($itemsNamesList, $item->getProduct()->getId());
+                array_push($productsIdsList, $item->getProduct()->getId());
+                array_push($productsNamesList, $item->getProduct()->getName());
+
             }
 
 
@@ -201,56 +137,58 @@ class SalesManago_Tracking_Model_Observer {
             $customerEmail = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
             $isLoggedIn = Mage::getSingleton('customer/session')->isLoggedIn();
             //if (!empty($customerEmail)) {
-                $apiKey = md5(time() . $apiSecret);
-                $dateTime = new DateTime('NOW');
+            $apiKey = md5(time() . $apiSecret);
+            $dateTime = new DateTime('NOW');
 
-                $data_to_json = array(
-                    'apiKey' => $apiKey,
-                    'clientId' => $clientId,
-                    'requestTime' => time(),
-                    'sha' => sha1($apiKey . $clientId . $apiSecret),
-                    'owner' => $ownerEmail,
-                    'contactEvent' => array(
-                        'date' => $dateTime->format('c'),
-                        'contactExtEventType' => 'CART',
-                        'products' => implode(',', $itemsNamesList),
-                        'value' => $cartHelper->getGrandTotal(),
-                    ),
-                );
 
-                $eventId = Mage::getSingleton('core/session')->getEventId();
+            $data_to_json = array(
+                'apiKey' => $apiKey,
+                'clientId' => $clientId,
+                'requestTime' => time(),
+                'sha' => sha1($apiKey . $clientId . $apiSecret),
+                'owner' => $ownerEmail,
+                'contactEvent' => array(
+                    'date' => $dateTime->format('c'),
+                    'contactExtEventType' => 'CART',
+                    'products' => implode(',', $productsIdsList),
+                    'value' => $cartHelper->getGrandTotal(),
+                    'detail1' => implode(",", $productsNamesList),
+                ),
+            );
 
-                if (isset($eventId) && !empty($eventId)) {
-                    $data_to_json['contactEvent']['eventId'] = $eventId;
-                    $json = json_encode($data_to_json);
-                    $result = $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/updateContactExtEvent', $json);
+            $eventId = Mage::getSingleton('core/session')->getEventId();
+
+            if (isset($eventId) && !empty($eventId)) {
+                $data_to_json['contactEvent']['eventId'] = $eventId;
+                $json = json_encode($data_to_json);
+                $result = $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/updateContactExtEvent', $json);
+            } else {
+                if ($isLoggedIn) {
+                    $data_to_json['email'] = $customerEmail;
                 } else {
-                    if($isLoggedIn){
-                        $data_to_json['email'] = $customerEmail;
-                    }
-                    else {
-                        if(!empty($_COOKIE['smclient']))
-                            $data_to_json['contactId'] = $_COOKIE['smclient'];
-                    }
-
-                    Mage::log(serialize($data_to_json), null, 'mylogfile.log');
-
-                    $json = json_encode($data_to_json);
-                    $result = $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/addContactExtEvent', $json);
+                    if (!empty($_COOKIE['smclient']))
+                        $data_to_json['contactId'] = $_COOKIE['smclient'];
                 }
 
-                $r = json_decode($result, true);
+                Mage::log(serialize($data_to_json), null, 'mylogfile.log');
 
-                if (!isset($eventId) && isset($r['eventId'])) {
-                    Mage::getSingleton('core/session')->setEventId($r['eventId']);
-                }
+                $json = json_encode($data_to_json);
+                $result = $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/addContactExtEvent', $json);
+            }
+
+            $r = json_decode($result, true);
+
+            if (!isset($eventId) && isset($r['eventId'])) {
+                Mage::getSingleton('core/session')->setEventId($r['eventId']);
+            }
             //}
         }
-	}
-	
-	public function newsletter_subscriber_save_before($observer){
+    }
+
+    public function newsletter_subscriber_save_before($observer)
+    {
         $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
-        if($active == 1) {
+        if ($active == 1) {
             $request = Mage::app()->getRequest();
             $moduleName = $request->getModuleName();
             $controllerName = $request->getControllerName();
@@ -269,7 +207,7 @@ class SalesManago_Tracking_Model_Observer {
                 $clientId = Mage::getStoreConfig('salesmanago_tracking/general/client_id');
                 $apiSecret = Mage::getStoreConfig('salesmanago_tracking/general/api_secret');
                 $ownerEmail = Mage::getStoreConfig('salesmanago_tracking/general/email');
-                $tags = Mage::getStoreConfig('salesmanago_tracking/general/tags');
+                $newsletterTags = Mage::getStoreConfig('salesmanago_tracking/general/tagsNewsletter');
                 $endPoint = Mage::getStoreConfig('salesmanago_tracking/general/endpoint');
 
 
@@ -283,34 +221,37 @@ class SalesManago_Tracking_Model_Observer {
 
                 $apiKey = md5(time() . $apiSecret);
 
-                //BK Change to PROSPECT
                 $data_to_json = array(
                     'apiKey' => $apiKey,
                     'clientId' => $clientId,
                     'requestTime' => time(),
                     'contact' => array(
                         'email' => $email,
-                        'state' => 'PROSPECT',
+                        'state' => 'CUSTOMER',
                     ),
                     'sha' => sha1($apiKey . $clientId . $apiSecret),
                     'owner' => $ownerEmail,
                 );
-                //BK Change Add a new tag on newsletter subscribe
-                $data_to_json['tags'] = array('Newsletter_'.
-                		str_replace('.','_',parse_url(Mage::getBaseUrl (Mage_Core_Model_Store::URL_TYPE_WEB), PHP_URL_HOST)));
-                //Mage::log($data_to_json);
 
+                if (!empty($newsletterTags)) {
+                    $newsletterTags = explode(",", $newsletterTags);
+                    if (is_array($newsletterTags) && count($newsletterTags) > 0) {
+                        $newsletterTags = array_map('trim', $newsletterTags);
+
+                    }
+                }
 
                 if ($data['subscriber_status'] == "1" && ($statusChange == true || ($id && $code) || $isAdmin)) {
                     $data_to_json['forceOptIn'] = true;
+                    $data_to_json['tags'] = $newsletterTags;
                 } elseif ($data['subscriber_status'] == "3" && ($statusChange == true || ($id && $code) || $isAdmin)) {
                     $data_to_json['forceOptOut'] = true;
+                    $data_to_json['removeTags'] = $newsletterTags;
                 } elseif ($actionName == 'massDelete') {
                     $data_to_json['forceOptOut'] = true;
+                    $data_to_json['removeTags'] = $newsletterTags;
                 }
-                
-                
-            
+
                 $json = json_encode($data_to_json);
                 $result = $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/upsert', $json);
 
@@ -331,8 +272,9 @@ class SalesManago_Tracking_Model_Observer {
                 return $r;
             }
         }
-	}
-	public function newsletter_subscriber_delete_after($observer)
+    }
+
+    public function newsletter_subscriber_delete_after($observer)
     {
         $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
         if ($active == 1) {
@@ -375,6 +317,138 @@ class SalesManago_Tracking_Model_Observer {
                 $r = json_decode($result, true);
 
                 return $r;
+            }
+        }
+    }
+
+    public function customer_data_edit($observer)
+    {
+        $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
+        if ($active == 1) {
+            if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+                $customer = Mage::getSingleton('customer/session')->getCustomer();
+
+                if (isset($customer['salesmanago_contact_id']) && !empty($customer['salesmanago_contact_id'])) {
+
+                    $clientId = Mage::getStoreConfig('salesmanago_tracking/general/client_id');
+                    $apiSecret = Mage::getStoreConfig('salesmanago_tracking/general/api_secret');
+                    $ownerEmail = Mage::getStoreConfig('salesmanago_tracking/general/email');
+                    $endPoint = Mage::getStoreConfig('salesmanago_tracking/general/endpoint');
+                    $apiKey = md5(time() . $apiSecret);
+                    $contactId = $customer->getSalesmanagoContactId();
+
+                    foreach ($customer->getAddresses() as $address) {
+                        $data = $address->toArray();
+                    }
+
+                    $street = $address->getStreet(1) . ' ' . $address->getStreet(2);
+
+                    if (isset($data['firstname']) && isset($data['lastname']) && isset($data['middlename'])) {
+                        $data['name'] = $data['firstname'] . ' ' . $data['middlename'] . ' ' . $data['lastname'];
+                    } else {
+                        $data['name'] = $data['firstname'] . ' ' . $data['lastname'];
+                    }
+
+                    $data_to_json = array(
+                        'apiKey' => $apiKey,
+                        'clientId' => $clientId,
+                        'requestTime' => time(),
+                        'sha' => sha1($apiKey . $clientId . $apiSecret),
+                        'contactId' => $contactId,
+                        'contact' => array(
+                            'name' => $data['name'],
+                            'fax' => $data['fax'],
+                            'company' => $data['company'],
+                            'phone' => $data['telephone'],
+                            'address' => array(
+                                'streetAddress' => $street,
+                                'zipCode' => $data['postcode'],
+                                'city' => $data['city'],
+                                'country' => $data['country_id'],
+                            ),
+                        ),
+                        'owner' => $ownerEmail,
+                        'async' => false,
+                    );
+
+                    $json = json_encode($data_to_json);
+                    $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/update', $json);
+                }
+            }
+        }
+    }
+
+    public function adminSystemConfigChangedSectionSalesmanago_tracking($observer)
+    {
+        $clientId = Mage::getStoreConfig('salesmanago_tracking/general/client_id');
+        $apiSecret = Mage::getStoreConfig('salesmanago_tracking/general/api_secret');
+        $ownerEmail = Mage::getStoreConfig('salesmanago_tracking/general/email');
+        $endPoint = Mage::getStoreConfig('salesmanago_tracking/general/endpoint');
+        $apiKey = md5(time() . $apiSecret);
+        $version = Mage::getVersion();
+
+        $data_to_json = array(
+            'apiKey' => $apiKey,
+            'clientId' => $clientId,
+            'requestTime' => time(),
+            'sha' => sha1($apiKey . $clientId . $apiSecret),
+            'owner' => $ownerEmail,
+            'tags' => ["MAGENTO_1"],
+            'properties' => array("platform"=>"Magento", "version"=>$version),
+        );
+
+        $json = json_encode($data_to_json);
+        $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/upsertVendorToSupport', $json);
+    }
+
+    public function wishlist_event($observer)
+    {
+        $active = Mage::getStoreConfig('salesmanago_tracking/general/active');
+        if ($active == 1) {
+            $isLoggedIn = Mage::getSingleton('customer/session')->isLoggedIn();
+            if ($isLoggedIn) {
+                $clientId = Mage::getStoreConfig('salesmanago_tracking/general/client_id');
+                $apiSecret = Mage::getStoreConfig('salesmanago_tracking/general/api_secret');
+                $ownerEmail = Mage::getStoreConfig('salesmanago_tracking/general/email');
+                $endPoint = Mage::getStoreConfig('salesmanago_tracking/general/endpoint');
+                $apiKey = md5(time() . $apiSecret);
+                $dateTime = new DateTime('NOW');
+                $customer = Mage::getSingleton('customer/session')->getCustomer();
+                $product = $observer->getEvent()->getItems()[0]->getProduct();
+                $productId = $product->getId();
+                $productName = $product->getName();
+                $productValue = round($product->getPrice(), 2);
+
+
+                $data_to_json = array(
+                    'apiKey' => $apiKey,
+                    'clientId' => $clientId,
+                    'requestTime' => time(),
+                    'sha' => sha1($apiKey . $clientId . $apiSecret),
+                    'owner' => $ownerEmail,
+                    'contactEvent' => array(
+                        'date' => $dateTime->format('c'),
+                        'contactExtEventType' => 'OTHER',
+                        'products' => $productId,
+                        'value' => $productValue,
+                        'detail1' => $productName,
+                        'description' => 'WISHLIST',
+                    ),
+                );
+
+
+                if ($isLoggedIn) {
+                    $data_to_json['email'] = $customer->getEmail();
+                    $json = json_encode($data_to_json);
+                } else {
+                    if (!isset($_COOKIE['smclient']) || empty($_COOKIE['smclient'])){
+                        $data_to_json['contactId'] = $_COOKIE['smclient'];
+                        $json = json_encode($data_to_json);
+                    }
+                }
+
+                if(!empty($json))
+                    $this->_getHelper()->_doPostRequest('https://' . $endPoint . '/api/contact/upsertVendorToSupport', $json);
             }
         }
     }

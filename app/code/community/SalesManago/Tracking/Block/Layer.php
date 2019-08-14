@@ -53,10 +53,22 @@ class SalesManago_Tracking_Block_Layer extends Mage_Core_Block_Template
     }
 
 
-    public function getTags(){
-      $tags = Mage::getStoreConfig('salesmanago_tracking/general/tags');
+    public function getTagsRegistration(){
+      $tags = Mage::getStoreConfig('salesmanago_tracking/general/tagsRegistration');
       $tags = explode(',', $tags);
       return $tags;
+    }
+
+    public function getTagsNewsletter(){
+        $tags = Mage::getStoreConfig('salesmanago_tracking/general/tagsNewsletter');
+        $tags = explode(',', $tags);
+        return $tags;
+    }
+
+    public function getTagsPurchase(){
+        $tags = Mage::getStoreConfig('salesmanago_tracking/general/tagsPurchase');
+        $tags = explode(',', $tags);
+        return $tags;
     }
     
     public function getClientSalesManagoId(){

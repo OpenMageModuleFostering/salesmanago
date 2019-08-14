@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>SALESmanago</name>
-    <version>1.3.1</version>
+    <version>1.5.0</version>
     <stability>stable</stability>
     <license>ASL</license>
     <channel>community</channel>
@@ -9,10 +9,103 @@
     <summary>SALESmanago Marketing Automation integration.</summary>
     <description>SALESmanago Marketing Automation integration.</description>
     <notes>SALESmanago Marketing Automation integration.</notes>
-    <authors><author><name>Benhauer Sp. z o.o. Sp. K.</name><user>SalesManago</user><email>info@salesmanago.pl</email></author><author><name>Carlos Alonso</name><user>delinaje</user><email>carlos@alonsodelinaje.com</email></author></authors>
-    <date>2016-10-19</date>
-    <time>13:48:37</time>
-    <contents><target name="magecommunity"><dir name="SalesManago"><dir name="Tracking"><dir name="Block"><file name="Layer.php" hash="112b431cd5af7e4bec6722b898a3afe3"/></dir><dir name="Helper"><file name="Data.php" hash="06350d6fd9788f9992de2ca7ed6d41ad"/></dir><dir name="Model"><file name="Customersync.php" hash="c2535f600d93d711fc67324bf786b576"/><file name="Observer.php" hash="9f486ab44ff4a2136934265996943705"/><dir name="Resource"><dir name="Customersync"><file name="Collection.php" hash="660921ec631893a685e0cacd4b9d07ef"/></dir><file name="Customersync.php" hash="3f6789e8568fb496e65d23cd6b8c3794"/><file name="Setup.php" hash="f196f0e7972b723dfaeecaea7ea0a0ee"/></dir></dir><dir name="controllers"><file name="CustomerController.php" hash="8f45dfe0ab7e33ce6801f58ca8576c52"/><dir name="Newsletter"><file name="SubscriberController.php" hash="790674d2e1a9aab3d0f795688d107cd5"/></dir></dir><dir name="etc"><file name="config.xml" hash="2c5d1fd9d6a8047f2edc8a32296af923"/><file name="system.xml" hash="b4344b259212dd8f83e7ee8163db63f3"/></dir><dir name="sql"><dir name="tracking_setup"><file name="mysql4-install-0.0.4.php" hash="efbe2ef2e234e72f8cfb61b02cd79fd8"/></dir></dir></dir></dir></target><target name="magedesign"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><file name="salesmanago.xml" hash="c8d48e529e20472913b844723b0513a6"/></dir><dir name="template"><dir name="salesmanago"><dir name="tracking"><file name="tracking.phtml" hash="7341fb419c9c86e6d0ec1eba6265d979"/></dir></dir></dir></dir></dir><dir name="default"><dir name="default"><dir name="template"><dir name="salesmanago"><dir name="tracking"><file name="tracking.phtml" hash=""/></dir></dir></dir><dir name="layout"><file name="salesmanago.xml" hash=""/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="SalesManago_Tracking.xml" hash="14e6da8fc1550fd46dc56ceea822d648"/></dir></target></contents>
+    <authors><author><name>Benhauer Sp. z o.o. Sp. K.</name><user>SalesManago</user><email>info@salesmanago.pl</email></author></authors>
+    <date>2014-02-06</date>
+    <time>01:51:06</time>
+    <contents>
+        <target name="magecommunity">
+            <dir name="SalesManago">
+                <dir name="Tracking">
+                    <dir name="Block">
+                        <file name="Layer.php" hash="5564c2dfb2cd62ea3d2f9cba11722718"/>
+                    </dir>
+                    <dir name="Helper">
+                        <file name="Data.php" hash="11f51fb7782d47b1d0245ac43fb5962c"/>
+                    </dir>
+                    <dir name="Model">
+                        <file name="Customersync.php" hash="c2535f600d93d711fc67324bf786b576"/>
+                        <file name="Observer.php" hash="9a75d0f9550f24d4ddcb795b31276d27"/>
+                        <dir name="Resource">
+                            <dir name="Customersync">
+                                <file name="Collection.php" hash="660921ec631893a685e0cacd4b9d07ef"/>
+                            </dir>
+                            <file name="Customersync.php" hash="3f6789e8568fb496e65d23cd6b8c3794"/>
+                            <file name="Setup.php" hash="f196f0e7972b723dfaeecaea7ea0a0ee"/>
+                        </dir>
+                    </dir>
+                    <dir name="controllers">
+                        <file name="CustomerController.php" hash="c0154d7e55d551e1e0c1e8bed796e32e"/>
+                        <dir name="Newsletter">
+                            <file name="SubscriberController.php" hash="e683bda792cd39c11c40ad77d3b1a18e"/>
+                        </dir>
+                    </dir>
+                    <dir name="etc">
+                        <file name="config.xml" hash="d12c4b7723ad2ff49ffca0b2ccdb3460"/>
+                        <file name="system.xml" hash="b0db5f4d20cd98eef017b1da798e59cd"/>
+                    </dir><dir name="sql">
+                    <dir name="tracking_setup">
+                        <file name="mysql4-install-0.0.4.php" hash="efbe2ef2e234e72f8cfb61b02cd79fd8"/>
+                    </dir>
+                </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="mageetc">
+            <dir name="modules">
+                <file name="SalesManago_Tracking.xml" hash="14e6da8fc1550fd46dc56ceea822d648"/>
+            </dir>
+        </target>
+        <target name="magedesign">
+            <dir name="frontend">
+                <dir name="default">
+                    <dir name="default">
+                        <dir name="layout">
+                            <file name="salesmanago.xml" hash="c8d48e529e20472913b844723b0513a6"/>
+                        </dir>
+                        <dir name="template">
+                            <dir name="salesmanago">
+                                <dir name="tracking">
+                                    <file name="tracking.phtml" hash="f39205215f98504187fbfd9e90d477fb"/>
+                                </dir>
+                            </dir>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="magedesign">
+            <dir name="frontend">
+                <dir name="base">
+                    <dir name="default">
+                        <dir name="layout">
+                            <file name="salesmanago.xml" hash="c8d48e529e20472913b844723b0513a6"/>
+                        </dir>
+                        <dir name="template">
+                            <dir name="salesmanago">
+                                <dir name="tracking">
+                                    <file name="tracking.phtml" hash="f39205215f98504187fbfd9e90d477fb"/>
+                                </dir>
+                            </dir>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="magelocale">
+            <dir name="de_DE">
+                <file name="Salesmanago_Tracking.csv"/>
+            </dir>
+            <dir name="es_ES">
+                <file name="Salesmanago_Tracking.csv"/>
+            </dir>
+            <dir name="pl_PL">
+                <file name="Salesmanago_Tracking.csv"/>
+            </dir>
+            <dir name="ru_RU">
+                <file name="Salesmanago_Tracking.csv"/>
+            </dir>
+        </target>
+    </contents>
     <compatible/>
-    <dependencies><required><php><min>5.2.0</min><max>8.0.0</max></php></required></dependencies>
+    <dependencies><required><php><min>5.2.0</min><max>7.2.0</max></php></required></dependencies>
 </package>
